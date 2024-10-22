@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Feedback Form | Mohan Babu University</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-image: url('https://example.com/feedback-background.jpg');
+        background-size: cover;
+        background-position: center;
+        margin: 0;
+        padding: 0;
+        color: white;
+      }
+
+      /* Header Styles */
+      .header {
+        background-color: rgba(0, 123, 255, 0.9);
+        color: white;
+        text-align: center;
+        padding: 20px;
+        animation: slideIn 1s ease-in-out;
+      }
+
+      .header h1 {
+        margin: 0;
+        font-size: 2.5rem;
+        animation: glowText 2s infinite alternate;
+      }
+
+      /* Footer Styles */
+      .footer {
+        background-color: rgba(51, 51, 51, 0.9);
+        color: white;
+        text-align: center;
+        padding: 10px;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        animation: footerSlideIn 2s ease-in;
+      }
+
+      .footer p {
+        margin: 0;
+      }
+
+      /* Main content styles */
+      .feedback-form {
+        width: 50%;
+        margin: 50px auto;
+        background-color: rgba(255, 255, 255, 0.85);
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        animation: fadeIn 1.5s ease-in;
+      }
+
+      .feedback-form h2 {
+        text-align: center;
+        color: #333;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      .form-group label {
+        display: block;
+        color: #333;
+      }
+
+      .form-group input,
+      .form-group textarea,
+      .form-group select {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+
+      .form-group textarea {
+        resize: vertical;
+      }
+
+      .form-group button {
+        width: 100%;
+        padding: 10px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+      }
+
+      .form-group button:hover {
+        transform: scale(1.05);
+        background-color: #218838;
+      }
+
+      .feedback-list {
+        margin-top: 20px;
+        display: none; /* Hide the feedback list by default */
+      }
+
+      #feedbackList li {
+        margin-bottom: 10px;
+        background-color: blue;
+      }
+
+      #feedbackList button {
+        background-color: red;
+        color: white;
+        border: none;
+        cursor: pointer;
+        padding: 5px 10px;
+        border-radius: 4px;
+        transition: background-color 0.3s ease;
+      }
+
+      #feedbackList button:hover {
+        background-color: darkred;
+      }
+
+      /* Animations */
+      @keyframes slideIn {
+        from { transform: translateY(-100px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+
+      @keyframes footerSlideIn {
+        from { transform: translateY(100px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+
+      @keyframes glowText {
+        from { text-shadow: 0 0 5px rgba(255, 255, 255, 0.6); }
+        to { text-shadow: 0 0 15px rgba(255, 255, 255, 1); }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <div class="header">
+      <h1>Mohan Babu University</h1>
+      <p>Student Feedback Portal</p>
+    </div>
+
+    <!-- Feedback Form -->
+    <div class="feedback-form">
+      <h2>Student Feedback Form</h2>
+      <div class="form-group">
+        <label for="name">Student Name:</label>
+        <input type="text" id="name" placeholder="Enter your name" />
+      </div>
+      <div class="form-group">
+        <label for="department">Department:</label>
+        <select id="department">
+          <option value="Computer Science">Computer Science</option>
+          <option value="Electronics">Electronics</option>
+          <option value="Mechanical">Mechanical</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="feedback">Feedback:</label>
+        <textarea id="feedback" rows="4" placeholder="Enter your feedback"></textarea>
+      </div>
+      <div class="form-group">
+        <button type="submit" onclick="storeFeedback()">Submit Feedback</button>
+      </div>
+      <div class="form-group">
+        <button onclick="toggleFeedback()">Show Feedback List</button>
+      </div>
+      <div class="feedback-list" id="feedbackContainer">
+        <h3>Feedback List</h3>
+        <ul id="feedbackList"></ul>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <p>&copy; 2024 Mohan Babu University. All rights reserved.</p>
+    </div>
+
+    <script>
+      // Function to store feedback in localStorage
+      function storeFeedback() {
+        let name = document.getElementById("name").value;
+        let department = document.getElementById("department").value;
+        let feedback = document.getElementById("feedback").value;
+
+        if (name === "" || feedback === "") {
+          alert("Please fill out all fields.");
+          return;
+        }
+
+        let feedbackEntry = {
+          name: name,
+          department: department,
+          feedback: feedback,
+        };
+
+        // Retrieve existing feedback from localStorage
+        let feedbackData = JSON.parse(localStorage.getItem("feedbackData")) || [];
+
+        // Add new feedback
+        feedbackData.push(feedbackEntry);
+
+        // Save updated feedback data to localStorage
+        localStorage.setItem("feedbackData", JSON.stringify(feedbackData));
+
+        // Clear form
+        document.getElementById("name").value = "";
+        document.getElementById("department").value = "Computer Science";
+        document.getElementById("feedback").value = "";
+
+        // Update feedback list
+        displayFeedback();
+      }
+
+      // Function to display feedback from localStorage
+      function displayFeedback() {
+        let feedbackList = document.getElementById("feedbackList");
+        feedbackList.innerHTML = "";
+
+        let feedbackData = JSON.parse(localStorage.getItem("feedbackData")) || [];
+
+        feedbackData.forEach((entry, index) => {
+          let listItem = document.createElement("li");
+          listItem.textContent = `${entry.name} (${entry.department}): ${entry.feedback}`;
+
+          // Create delete button for each feedback entry
+          let deleteButton = document.createElement("button");
+          deleteButton.textContent = "Delete";
+          deleteButton.style.marginLeft = "10px";
+          deleteButton.onclick = function () {
+            deleteFeedback(index);
+          };
+
+          // Append the delete button to the list item
+          listItem.appendChild(deleteButton);
+          feedbackList.appendChild(listItem);
+        });
+      }
+
+      // Function to delete feedback from localStorage
+      function deleteFeedback(index) {
+        let feedbackData = JSON.parse(localStorage.getItem("feedbackData")) || [];
+
+        // Remove the selected feedback from the array
+        feedbackData.splice(index, 1);
+
+        // Update localStorage with the new feedback array
+        localStorage.setItem("feedbackData", JSON.stringify(feedbackData));
+
+        // Update feedback list
+        displayFeedback();
+      }
+
+      // Function to toggle feedback visibility
+      function toggleFeedback() {
+        let feedbackContainer = document.getElementById("feedbackContainer");
+        if (feedbackContainer.style.display === "none" || feedbackContainer.style.display === "") {
+          displayFeedback(); // Populate the feedback list before showing it
+          feedbackContainer.style.display = "block";
+        } else {
+          feedbackContainer.style.display = "none";
+        }
+      }
+
+      // Hide feedback list on page load
+      window.onload = function () {
+        document.getElementById("feedbackContainer").style.display = "none";
+      };
+    </script>
+  </body>
+</html>
